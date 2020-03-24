@@ -1,0 +1,60 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vulnerabilityAssessments_Default_storageContainerPath": {
+            "value": null
+        },
+        "virtualMachines_edge_vm_name": {
+            "value": null
+        },
+        "servers_reliable_edge_relay_sql_name": {
+            "value": null
+        },
+        "networkInterfaces_edge_vm758_name": {
+            "value": null
+        },
+        "publicIPAddresses_edge_vm_ip_name": {
+            "value": null
+        },
+        "sites_reliable_edge_relay_function_name": {
+            "value": null
+        },
+        "networkSecurityGroups_edge_vm_nsg_name": {
+            "value": null
+        },
+        "serverfarms_ASP_reliableedgerelay_9228_name": {
+            "value": null
+        },
+        "IotHubs_reliable_edge_relay_iot_hub_name": {
+            "value": null
+        },
+        "namespaces_reliable_edge_relay_hub_name": {
+            "value": null
+        },
+        "streamingjobs_ingestion_job_name": {
+            "value": null
+        },
+        "storageAccounts_reliableedgerelaydiag_name": {
+            "value": null
+        },
+        "virtualNetworks_reliable_edge_relay_vnet_name": {
+            "value": null
+        },
+        "storageAccounts_reliableedgerelaystorage_name": {
+            "value": null
+        },
+        "components_reliable_edge_relay_app_insights_name": {
+            "value": null
+        },
+        "workspaces_reliable_edge_relay_log_analytics_name": {
+            "value": null
+        },
+        "smartdetectoralertrules_failure_anomalies___reliable_edge_relay_app_insights_name": {
+            "value": null
+        },
+        "actiongroups_application_20insights_20smart_20detection_externalid": {
+            "value": null
+        }
+    }
+}
