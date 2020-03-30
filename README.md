@@ -96,9 +96,9 @@ The Edge Relay interface is simple and abstracted from the application layer. Be
 
 This solution comes in three distinct parts:
 
-1. The Azure infrastructure, which you can provision and deploy using the `./ArmTemplate` files. For more information on how to publish an Arm Template you can read [here](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/quickstart-create-templates-use-the-portal)
-1. The IoT Edge application located in `./DemoEdgeApp` that you can build and publish using VS Code with the IoT Edge extensions. For more information on how to use Visual Studio Code to develop and debug modules for Azure IoT Edge you can read [here](https://docs.microsoft.com/en-us/azure/iot-edge/how-to-vs-code-develop-module)
-1. The Azure Functions code located in `./GapBackfill`, which you can build and publish using VS Code and the Azure Functions extension. For more information on how to use Visual Studio Code to develop and debug Azure Functions by using Visual Studio Code you can read [here](https://docs.microsoft.com/en-us/azure/azure-functions/functions-develop-vs-code?tabs=csharp)
+1. The Azure infrastructure, which you can provision and deploy using the `./ArmTemplate` files. For more information on how to publish an Arm Template you can read [here](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/quickstart-create-templates-use-the-portal).
+1. The IoT Edge application located in `./DemoEdgeApp` that you can build and publish using VS Code with the IoT Edge extensions. For more information on how to use Visual Studio Code to develop and debug modules for Azure IoT Edge you can read [here](https://docs.microsoft.com/en-us/azure/iot-edge/how-to-vs-code-develop-module).
+1. The Azure Functions code located in `./GapBackfill`, which you can build and publish using VS Code and the Azure Functions extension. For more information on how to use Visual Studio Code to develop and debug Azure Functions by using Visual Studio Code you can read [here](https://docs.microsoft.com/en-us/azure/azure-functions/functions-develop-vs-code?tabs=csharp).
 
 ## Running the sample
 
