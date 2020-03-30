@@ -97,12 +97,21 @@ The Edge Relay interface is simple and abstracted from the application layer. Be
 This solution comes in three distinct parts:
 
 1. The Azure infrastructure, which you can provision and deploy using the `./ArmTemplate` files. For more information on how to publish an Arm Template you can read [here](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/quickstart-create-templates-use-the-portal)
-1. The IoT Edge application located in `./DemoEdgeApp` that you can build and publish using VS Code with the IoT Edge extensions
-1. The Azure Functions code located in `./GapBackfill`, which you can build and publish using VS Code and the Azure Functions extension.
-
+1. The IoT Edge application located in `./DemoEdgeApp` that you can build and publish using VS Code with the IoT Edge extensions. For more information on how to use Visual Studio Code to develop and debug modules for Azure IoT Edge you can read [here](https://docs.microsoft.com/en-us/azure/iot-edge/how-to-vs-code-develop-module)
+1. The Azure Functions code located in `./GapBackfill`, which you can build and publish using VS Code and the Azure Functions extension. For more information on how to use Visual Studio Code to develop and debug Azure Functions by using Visual Studio Code you can read [here](https://docs.microsoft.com/en-us/azure/azure-functions/functions-develop-vs-code?tabs=csharp)
 
 ## Running the sample
 
+Running the sample requires all three above solution components to be in place. The steps for provisioning this solution are in order:
+
+1. Provision the Azure resources using the provided ARM template.
+2. Create a new IoT Edge Device.
+3. Deploy the provided azure functions and update the SQL connection string in the application settings.
+4. Build and deploy the provided Edge application the newly created Edge device.
+
+If all goes well, you should be able to see some telemetry flowing throughout the system. This telemetry module is the same with the C# quick start sample that comes with the IoT Edge Dev Experience tools. This periodic telemetry message is routed to the `ReliableRelayModule`, where it's piped (see `PipeMessage` in `ReliableRelayModule`) and enhanced with Start and End indices, in this case timestamps. Leveraging these indices, we can examine the received messages in Azure in real time and determine if any data gap exists. In that case, a back fill request is triggered to the specific device with the missing data indices.
+
+To to simulate a data gap, you'll need to invoke a direct method on the running device. Invoking the `SkipMessageMethod` direct method, the next message in the `PipeMessage` will be omitted. This in a few seconds will be detected an a `BackfillMethod` direct method request will be triggered by the running Azure functions, requesting the missing data.
 
 ## Contributing
 
