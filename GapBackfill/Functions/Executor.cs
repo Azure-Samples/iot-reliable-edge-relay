@@ -2,14 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.ExceptionServices;
-using System.Text;
 using System.Threading.Tasks;
-
-using Microsoft.Azure.EventHubs;
+using Azure.Messaging.EventHubs;
+using Azure.Storage.Queues;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
-using Microsoft.WindowsAzure.Storage.Queue;
-
 using Newtonsoft.Json;
 
 namespace Azure.Samples.ReliableEdgeRelay.Functions
@@ -25,22 +22,22 @@ namespace Azure.Samples.ReliableEdgeRelay.Functions
         [FunctionName("ExecuteBackfillRequest")]
         public static async Task RunAsync(
             [EventHubTrigger("%ExecutionEventHubName%", Connection = "EventHubConnectionString")] EventData[] inputEvent,
-            [Queue("%StorageQueueName%", Connection = "StorageConnectionString")] CloudQueue outputQueue,
+            [Queue("%StorageQueueName%", Connection = "StorageConnectionString")] QueueClient outputQueue,
             ILogger logger,
             ExecutionContext context)
         {
-            var exceptions = new List<Exception>();
+            var exceptions = new List<RequestFailedException>();
 
             foreach (EventData eventData in inputEvent)
             {
                 try
                 {
-                    var messageBody = Encoding.UTF8.GetString(eventData.Body.Array, eventData.Body.Offset, eventData.Body.Count);
+                    byte[] messageBody = eventData.EventBody.ToArray();
 
                     logger.LogInformation($"{context.FunctionName}: {messageBody}");
 
                     // AzFunctions will append multiple messages in the same event
-                    var messageBodies = messageBody.Split(System.Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+                    var messageBodies = messageBody.ToString().Split(System.Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
 
                     foreach (string message in messageBodies)
                     {
@@ -51,24 +48,21 @@ namespace Azure.Samples.ReliableEdgeRelay.Functions
 
                         await Helpers.IoTHelpers.InvokeDirectMethod(backfillDeviceRequest, logger);
 
-                        await outputQueue.AddMessageAsync(
-                                message: new CloudQueueMessage(
+                        await outputQueue.SendMessageAsync(
                                     JsonConvert.SerializeObject(new Types.DataGap()
                                     {
                                         BatchId = backfillDeviceRequest.BatchId,
                                         StartWindow = backfillDeviceRequest.StartWindow,
                                         EndWindow = backfillDeviceRequest.EndWindow,
                                         GapInSeconds = (backfillDeviceRequest.EndWindow - backfillDeviceRequest.StartWindow).Seconds
-                                    })),
+                                    }),
                                 timeToLive: TimeSpan.FromSeconds(Int32.Parse(Environment.GetEnvironmentVariable("DataGapsTTLSeconds"))),
-                                initialVisibilityDelay: TimeSpan.FromSeconds(Int32.Parse(Environment.GetEnvironmentVariable("DetectionRetryInvincibleSeconds"))),
-                                options: null,
-                                operationContext: null);
+                                visibilityTimeout: TimeSpan.FromSeconds(Int32.Parse(Environment.GetEnvironmentVariable("DetectionRetryInvincibleSeconds"))));
 
                         await Task.Yield();
                     }
                 }
-                catch (Exception e)
+                catch (RequestFailedException e)
                 {
                     exceptions.Add(e);
                 }

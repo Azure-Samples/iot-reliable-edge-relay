@@ -1,10 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
-
 using Newtonsoft.Json;
 
 namespace Azure.Samples.ReliableEdgeRelay.Functions
@@ -56,7 +53,7 @@ namespace Azure.Samples.ReliableEdgeRelay.Functions
                 }
 
             }
-            catch (Exception e)
+            catch (RequestFailedException e)
             {
                 log.LogError($"Error in {context.FunctionName}: {e.ToString()}");
                 throw;
