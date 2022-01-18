@@ -69,7 +69,6 @@ namespace Azure.Samples.ReliableEdgeRelay.Functions
 
             if (exceptions.Count == 1)
                 ExceptionDispatchInfo.Capture(exceptions.Single()).Throw();
-
         }
     }
 }
