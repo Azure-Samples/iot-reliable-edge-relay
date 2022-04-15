@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
@@ -53,9 +54,9 @@ namespace Azure.Samples.ReliableEdgeRelay.Functions
                 }
 
             }
-            catch (RequestFailedException e)
+            catch (Exception e)
             {
-                log.LogError($"Error in {context.FunctionName}: {e.ToString()}");
+                log.LogError($"Error in {context.FunctionName}: {e}");
                 throw;
             }
         }

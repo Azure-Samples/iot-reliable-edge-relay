@@ -25,13 +25,13 @@ namespace Azure.Samples.ReliableEdgeRelay.Functions
             ILogger logger,
             ExecutionContext context)
         {
-            var exceptions = new List<RequestFailedException>();
+            var exceptions = new List<Exception>();
 
             foreach (EventData eventData in inputEvents)
             {
                 try
                 {
-                    byte[] messageBody = eventData.EventBody.ToArray();
+                    string messageBody = eventData.EventBody.ToString();
 
                     logger.LogInformation($"{context.FunctionName}: {messageBody}");
 
@@ -56,7 +56,7 @@ namespace Azure.Samples.ReliableEdgeRelay.Functions
                         await Task.Yield();
                     }
                 }
-                catch (RequestFailedException e)
+                catch (Exception e)
                 {
                     exceptions.Add(e);
                 }
