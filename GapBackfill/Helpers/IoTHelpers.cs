@@ -1,7 +1,5 @@
-
 using System;
 using System.Threading.Tasks;
-
 using Microsoft.Azure.Devices;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;

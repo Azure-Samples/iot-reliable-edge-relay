@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
-
 using Microsoft.Extensions.Logging;
-
 using Newtonsoft.Json;
 
 namespace Azure.Samples.ReliableEdgeRelay.Helpers
