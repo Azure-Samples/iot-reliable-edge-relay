@@ -1,31 +1,46 @@
 {
-   // Use IntelliSense to find out which attributes exist for C# debugging
-   // Use hover for the description of the existing attributes
-   // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
-   "version": "0.2.0",
-   "configurations": [
-    {
-        "name": ".NET Core Launch (console)",
-        "type": "coreclr",
-        "request": "launch",
-        "preLaunchTask": "build",
-        "program": "${workspaceFolder}/DemoEdgeApp/modules/ReliableRelayModule/bin/Debug/netcoreapp2.1/ReliableRelayModule.dll",
-        "args": [],
-        "cwd": "${workspaceFolder}/DemoEdgeApp/modules/ReliableRelayModule",
-        "console": "internalConsole",
-        "stopAtEntry": false
-    },
-    {
-        "name": ".NET Core Attach",
-        "type": "coreclr",
-        "request": "attach",
-        "processId": "${command:pickProcess}"
-    },
-    {
-        "name": "Attach to .NET Functions",
-        "type": "coreclr",
-        "request": "attach",
-        "processId": "${command:azureFunctions.pickProcess}"
-    }
-]
+    // Use IntelliSense to find out which attributes exist for C# debugging
+    // Use hover for the description of the existing attributes
+    // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": ".NET Core Launch (console)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/DemoEdgeApp/modules/ReliableRelayModule/bin/Debug/net6.0/ReliableRelayModule.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/DemoEdgeApp/modules/ReliableRelayModule",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach",
+            "processId": "${command:pickProcess}"
+        },
+        {
+            "name": "Attach to .NET Functions",
+            "type": "coreclr",
+            "request": "attach",
+            "processId": "${command:azureFunctions.pickProcess}"
+        },
+        {
+            "name": "ReliableRelayModule Local Debug (.NET Core)",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceRoot}/DemoEdgeApp/modules/ReliableRelayModule/bin/Debug/net6.0/ReliableRelayModule.dll",
+            "args": [],
+            "cwd": "${workspaceRoot}/DemoEdgeApp/modules/ReliableRelayModule",
+            "internalConsoleOptions": "openOnSessionStart",
+            "stopAtEntry": false,
+            "console": "internalConsole",
+            "env": {
+                "EdgeHubConnectionString": "${config:azure-iot-edge.EdgeHubConnectionString}",
+                "EdgeModuleCACertificateFile": "${config:azure-iot-edge.EdgeModuleCACertificateFile}"
+            }
+        }
+    ]
 }

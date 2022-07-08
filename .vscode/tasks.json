@@ -84,7 +84,7 @@
             "type": "func",
             "dependsOn": "build",
             "options": {
-                "cwd": "${workspaceFolder}/GapBackfill/bin/Debug/netcoreapp2.1"
+                "cwd": "${workspaceFolder}/GapBackfill/bin/Debug/net6.0"
             },
             "command": "host start",
             "isBackground": true,

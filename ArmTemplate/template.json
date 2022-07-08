@@ -147,7 +147,17 @@
                         "eventHubs": [],
                         "storageContainers": []
                     },
-                    "routes": [],
+                    "routes": [
+                        {
+                            "name": "messages",
+                            "source": "DeviceMessages",
+                            "condition": "true",
+                            "endpointNames": [
+                                "events"
+                            ],
+                            "isEnabled": true
+                        }
+                    ],
                     "fallbackRoute": {
                         "name": "$fallback",
                         "source": "DeviceMessages",
@@ -569,7 +579,7 @@
                 "transformation": {
                     "name": "processing-query",
                     "properties": {
-                        "query": "SELECT * INTO [processing-data-gaps] FROM [iot-hub]",
+                        "query": "with\r\ndetection\r\nas\r\n(\r\n    select \r\n        *\r\n    from [iot-hub] partition by PartitionId\r\n    where StartWindow > LAG(EndWindow) OVER (PARTITION BY BatchId LIMIT DURATION(hour, 1))\r\n),\r\ndataWindows\r\nas\r\n(\r\n    select \r\n        *\r\n    from [iot-hub] partition by PartitionId\r\n    where StartWindow = LAG(EndWindow) OVER (PARTITION BY BatchId LIMIT DURATION(hour, 1))\r\n)\r\n\r\nSelect detection.BatchId, detection.StartWindow, detection.EndWindow\r\ninto [detected-data-gaps]\r\nfrom detection\r\n\r\nSelect dataWindows.BatchId, dataWindows.StartWindow, dataWindows.EndWindow\r\ninto [data-windows-sql]\r\nfrom dataWindows\r\n\r\nSelect *\r\ninto [ingress-metadata]\r\nfrom [iot-hub]",
                         "streamingUnits": 1
                     }
                 }
