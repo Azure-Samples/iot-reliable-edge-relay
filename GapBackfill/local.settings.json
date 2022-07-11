@@ -6,14 +6,12 @@
     "EventHubConnectionString": "[Add your connection string here]",
     "IoTHubConnectionString": "[Add your connection string here]",
     "SQLConnectionString": "[Add your connection string here]",
-
     "BackfillMethodName": "BackfillMethod",
     "DetectionEventHubName": "detected-data-gaps",
     "ExecutionEventHubName": "backfill-requests",
     "IoTDeviceId": "vm-reliable-relay",
     "IoTMethodId": "ReliableRelayModule",
     "StorageQueueName": "data-gap-backfill-requests",
-
     "DirectMethodResponseTimeoutSeconds": "10",
     "BackfillTimeout": "10800",
     "DataGapsTTLSeconds": "86400",

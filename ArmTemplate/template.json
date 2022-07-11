@@ -476,8 +476,8 @@
                                 "properties": {
                                     "eventHubName": "processing-data-gaps",
                                     "serviceBusNamespace": "reliable-edge-relay-hub",
-                                    "sharedAccessPolicyName": "RootManageSharedAccessKey",
-                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', 'reliable-edge-relay-hub', 'RootManageSharedAccessKey'),'2017-04-01').primaryKey]"
+                                    "sharedAccessPolicyName": "StreamAnalyticsAccessKey",
+                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', 'reliable-edge-relay-hub', 'StreamAnalyticsAccessKey'),'2017-04-01').primaryKey]"
                                 }
                             },
                             "compression": {
@@ -518,8 +518,8 @@
                                     "partitionKey": "BatchId",
                                     "eventHubName": "detected-data-gaps",
                                     "serviceBusNamespace": "reliable-edge-relay-hub",
-                                    "sharedAccessPolicyName": "RootManageSharedAccessKey",
-                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', 'reliable-edge-relay-hub', 'RootManageSharedAccessKey'),'2017-04-01').primaryKey]"
+                                    "sharedAccessPolicyName": "StreamAnalyticsAccessKey",
+                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', 'reliable-edge-relay-hub', 'StreamAnalyticsAccessKey'),'2017-04-01').primaryKey]"
                                 }
                             },
                             "serialization": {
@@ -540,8 +540,8 @@
                                     "partitionKey": "BatchId",
                                     "eventHubName": "ingress-metadata",
                                     "serviceBusNamespace": "reliable-edge-relay-hub",
-                                    "sharedAccessPolicyName": "RootManageSharedAccessKey",
-                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', 'reliable-edge-relay-hub', 'RootManageSharedAccessKey'),'2017-04-01').primaryKey]"
+                                    "sharedAccessPolicyName": "StreamAnalyticsAccessKey",
+                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', 'reliable-edge-relay-hub', 'StreamAnalyticsAccessKey'),'2017-04-01').primaryKey]"
                                 }
                             },
                             "serialization": {
@@ -562,8 +562,8 @@
                                     "partitionKey": "BatchId",
                                     "eventHubName": "backfill-requests",
                                     "serviceBusNamespace": "reliable-edge-relay-hub",
-                                    "sharedAccessPolicyName": "RootManageSharedAccessKey",
-                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', 'reliable-edge-relay-hub', 'RootManageSharedAccessKey'),'2017-04-01').primaryKey]"
+                                    "sharedAccessPolicyName": "StreamAnalyticsAccessKey",
+                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', 'reliable-edge-relay-hub', 'StreamAnalyticsAccessKey'),'2017-04-01').primaryKey]"
                                 }
                             },
                             "serialization": {
@@ -644,6 +644,21 @@
                 "rights": [
                     "Listen",
                     "Manage",
+                    "Send"
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/AuthorizationRules",
+            "apiVersion": "2017-04-01",
+            "name": "[concat(parameters('namespaces_reliable_edge_relay_hub_name'), '/StreamAnalyticsAccessKey')]",
+            "location": "[variables('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaces_reliable_edge_relay_hub_name'))]"
+            ],
+            "properties": {
+                "rights": [
+                    "Listen",
                     "Send"
                 ]
             }
@@ -756,7 +771,7 @@
         },
         {
             "type": "Microsoft.Storage/storageAccounts/blobServices",
-            "apiVersion": "2019-04-01",
+            "apiVersion": "2021-09-01",
             "name": "[concat(parameters('storageAccounts_reliableedgerelaydiag_name'), '/default')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_reliableedgerelaydiag_name'))]"
@@ -772,7 +787,7 @@
         },
         {
             "type": "Microsoft.Storage/storageAccounts/blobServices",
-            "apiVersion": "2019-04-01",
+            "apiVersion": "2021-09-01",
             "name": "[concat(parameters('storageAccounts_reliableedgerelaystorage_name'), '/default')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_reliableedgerelaystorage_name'))]"
@@ -1044,7 +1059,7 @@
         },
         {
             "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-            "apiVersion": "2019-04-01",
+            "apiVersion": "2021-09-01",
             "name": "[concat(parameters('storageAccounts_reliableedgerelaystorage_name'), '/default/vulnerability-assessments')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_reliableedgerelaystorage_name'), 'default')]",
@@ -1056,7 +1071,7 @@
         },
         {
             "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-            "apiVersion": "2019-04-01",
+            "apiVersion": "2021-09-01",
             "name": "[concat(parameters('storageAccounts_reliableedgerelaystorage_name'), '/default/azure-webjobs-eventhub')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_reliableedgerelaystorage_name'), 'default')]",
@@ -1068,7 +1083,7 @@
         },
         {
             "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-            "apiVersion": "2019-04-01",
+            "apiVersion": "2021-09-01",
             "name": "[concat(parameters('storageAccounts_reliableedgerelaystorage_name'), '/default/azure-webjobs-hosts')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_reliableedgerelaystorage_name'), 'default')]",
@@ -1080,7 +1095,7 @@
         },
         {
             "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-            "apiVersion": "2019-04-01",
+            "apiVersion": "2021-09-01",
             "name": "[concat(parameters('storageAccounts_reliableedgerelaystorage_name'), '/default/azure-webjobs-secrets')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_reliableedgerelaystorage_name'), 'default')]",
@@ -1092,7 +1107,7 @@
         },
         {
             "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-            "apiVersion": "2019-04-01",
+            "apiVersion": "2021-09-01",
             "name": "[concat(parameters('storageAccounts_reliableedgerelaydiag_name'), '/default/bootdiagnostics-edgevm-310a81f3-7687-4952-a4a7-24cec9f63bf7')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_reliableedgerelaydiag_name'), 'default')]",
@@ -1104,7 +1119,7 @@
         },
         {
             "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-            "apiVersion": "2019-04-01",
+            "apiVersion": "2021-09-01",
             "name": "[concat(parameters('storageAccounts_reliableedgerelaystorage_name'), '/default/edge-vm')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_reliableedgerelaystorage_name'), 'default')]",

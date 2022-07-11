@@ -32,10 +32,10 @@ namespace Azure.Samples.ReliableEdgeRelay.Helpers
         internal static string SQL_CREATE_TABLE_BACKFILL_REQUEST = @"
         IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='BackfillDeviceRequests' and xtype='U')
         CREATE TABLE BackfillDeviceRequests (
-        StartWindow nvarchar(50) null,
-        EndWindow nvarchar(50) null,
-        BatchId nvarchar(50),
-        Created nvarchar(50) null,);";
+        StartWindow nvarchar(50) not null,
+        EndWindow nvarchar(50) not null,
+        BatchId nvarchar(50) not null,
+        Created nvarchar(50) not null,);";
 
         internal static string SQL_INSERT_BACKFILL_REQUEST = @"
         INSERT INTO [dbo].[BackfillDeviceRequests]
