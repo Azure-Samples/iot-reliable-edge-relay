@@ -29,6 +29,14 @@ namespace Azure.Samples.ReliableEdgeRelay.Helpers
         AND o2.EndWindow <= @startWindow AND o1.StartWindow >= @endWindow
         ORDER BY StartWindow DESC;";
 
+        internal static string SQL_CREATE_TABLE_BACKFILL_REQUEST = @"
+        IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='BackfillDeviceRequests' and xtype='U')
+        CREATE TABLE BackfillDeviceRequests (
+        StartWindow nvarchar(50) not null,
+        EndWindow nvarchar(50) not null,
+        BatchId nvarchar(50) not null,
+        Created nvarchar(50) not null,);";
+
         internal static string SQL_INSERT_BACKFILL_REQUEST = @"
         INSERT INTO [dbo].[BackfillDeviceRequests]
         VALUES (@startWindow, @endWindow, @batchId, @Created);";
@@ -136,6 +144,12 @@ namespace Azure.Samples.ReliableEdgeRelay.Helpers
                 {
                     await connection.OpenAsync();
 
+                    using (SqlCommand command = new SqlCommand(SqlHelpers.SQL_CREATE_TABLE_BACKFILL_REQUEST, connection))
+                    {
+                        if (await command.ExecuteNonQueryAsync() != 1)
+                            throw new Exception($"Cannot create table for backfill request in SQL:{JsonConvert.SerializeObject(request)}");
+                    }
+
                     using (SqlCommand command = new SqlCommand(SqlHelpers.SQL_INSERT_BACKFILL_REQUEST, connection))
                     {
                         command.Parameters.AddWithValue("@startWindow", request.StartWindow.ToUniversalTime().ToString("o"));
@@ -163,6 +177,12 @@ namespace Azure.Samples.ReliableEdgeRelay.Helpers
                 using (SqlConnection connection = new SqlConnection(Environment.GetEnvironmentVariable("SQLConnectionString")))
                 {
                     await connection.OpenAsync();
+
+                    using (SqlCommand command = new SqlCommand(SqlHelpers.SQL_CREATE_TABLE_BACKFILL_REQUEST, connection))
+                    {
+                        if (await command.ExecuteNonQueryAsync() != 1)
+                            throw new Exception($"Cannot create table for backfill request in SQL:{JsonConvert.SerializeObject(request)}");
+                    }
 
                     using (SqlCommand command = new SqlCommand(SqlHelpers.SQL_GET_EXISTING_BACKFILL_REQUEST, connection))
                     {

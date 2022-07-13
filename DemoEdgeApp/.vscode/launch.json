@@ -28,7 +28,7 @@
       "name": "ReliableRelayModule Local Debug (.NET Core)",
       "type": "coreclr",
       "request": "launch",
-      "program": "${workspaceRoot}/modules/ReliableRelayModule/bin/Debug/netcoreapp2.1/ReliableRelayModule.dll",
+      "program": "${workspaceRoot}/modules/ReliableRelayModule/bin/Debug/net6.0/ReliableRelayModule.dll",
       "args": [],
       "cwd": "${workspaceRoot}/modules/ReliableRelayModule",
       "internalConsoleOptions": "openOnSessionStart",
