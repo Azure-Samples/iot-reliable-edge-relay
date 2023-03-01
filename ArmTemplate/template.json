@@ -422,7 +422,7 @@
             "name": "[parameters('streamingjobs_ingestion_job_name')]",
             "location": "[variables('location')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Devices/IotHubs', 'reliable-edge-relay-iot-hub')]",
+                "[resourceId('Microsoft.Devices/IotHubs', parameters('IotHubs_reliable_edge_relay_iot_hub_name'))]",
                 "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('namespaces_reliable_edge_relay_hub_name'), 'processing-data-gaps')]",
                 "[resourceId('Microsoft.Sql/servers/databases', parameters('servers_reliable_edge_relay_sql_name'), 'IngressMetadata')]",
                 "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('namespaces_reliable_edge_relay_hub_name'), 'detected-data-gaps')]",
@@ -448,9 +448,9 @@
                             "datasource": {
                                 "type": "Microsoft.Devices/IotHubs",
                                 "properties": {
-                                    "iotHubNamespace": "reliable-edge-relay-iot-hub",
+                                    "iotHubNamespace": "[parameters('IotHubs_reliable_edge_relay_iot_hub_name')]",
                                     "sharedAccessPolicyName": "iothubowner",
-                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.Devices/IotHubs/IotHubKeys', 'reliable-edge-relay-iot-hub', 'iothubowner'),'2018-04-01').primaryKey]",
+                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.Devices/IotHubs/IotHubKeys', parameters('IotHubs_reliable_edge_relay_iot_hub_name'), 'iothubowner'),'2018-04-01').primaryKey]",
                                     "endpoint": "messages/events",
                                     "consumerGroupName": "$Default"
                                 }
@@ -475,9 +475,9 @@
                                 "type": "Microsoft.ServiceBus/EventHub",
                                 "properties": {
                                     "eventHubName": "processing-data-gaps",
-                                    "serviceBusNamespace": "reliable-edge-relay-hub",
+                                    "serviceBusNamespace": "[parameters('namespaces_reliable_edge_relay_hub_name')]",
                                     "sharedAccessPolicyName": "StreamAnalyticsAccessKey",
-                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', 'reliable-edge-relay-hub', 'StreamAnalyticsAccessKey'),'2017-04-01').primaryKey]"
+                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', parameters('namespaces_reliable_edge_relay_hub_name'), 'StreamAnalyticsAccessKey'),'2017-04-01').primaryKey]"
                                 }
                             },
                             "compression": {
@@ -517,9 +517,9 @@
                                 "properties": {
                                     "partitionKey": "BatchId",
                                     "eventHubName": "detected-data-gaps",
-                                    "serviceBusNamespace": "reliable-edge-relay-hub",
+                                    "serviceBusNamespace": "[parameters('namespaces_reliable_edge_relay_hub_name')]",
                                     "sharedAccessPolicyName": "StreamAnalyticsAccessKey",
-                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', 'reliable-edge-relay-hub', 'StreamAnalyticsAccessKey'),'2017-04-01').primaryKey]"
+                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', parameters('namespaces_reliable_edge_relay_hub_name'), 'StreamAnalyticsAccessKey'),'2017-04-01').primaryKey]"
                                 }
                             },
                             "serialization": {
@@ -539,9 +539,9 @@
                                 "properties": {
                                     "partitionKey": "BatchId",
                                     "eventHubName": "ingress-metadata",
-                                    "serviceBusNamespace": "reliable-edge-relay-hub",
+                                    "serviceBusNamespace": "[parameters('namespaces_reliable_edge_relay_hub_name')]",
                                     "sharedAccessPolicyName": "StreamAnalyticsAccessKey",
-                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', 'reliable-edge-relay-hub', 'StreamAnalyticsAccessKey'),'2017-04-01').primaryKey]"
+                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', parameters('namespaces_reliable_edge_relay_hub_name'), 'StreamAnalyticsAccessKey'),'2017-04-01').primaryKey]"
                                 }
                             },
                             "serialization": {
@@ -561,9 +561,9 @@
                                 "properties": {
                                     "partitionKey": "BatchId",
                                     "eventHubName": "backfill-requests",
-                                    "serviceBusNamespace": "reliable-edge-relay-hub",
+                                    "serviceBusNamespace": "[parameters('namespaces_reliable_edge_relay_hub_name')]",
                                     "sharedAccessPolicyName": "StreamAnalyticsAccessKey",
-                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', 'reliable-edge-relay-hub', 'StreamAnalyticsAccessKey'),'2017-04-01').primaryKey]"
+                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', parameters('namespaces_reliable_edge_relay_hub_name'), 'StreamAnalyticsAccessKey'),'2017-04-01').primaryKey]"
                                 }
                             },
                             "serialization": {
