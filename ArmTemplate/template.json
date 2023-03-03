@@ -639,7 +639,7 @@
             "name": "[parameters('actionGroups_reliable_iot_edge_bindsi03_name')]",
             "location": "Global",
             "dependsOn": [
-                "[resourceId('microsoft.insights/components', parameters('components_reliable_edge_relay_app_insights_name'))]",
+                "[resourceId('microsoft.insights/components', parameters('components_reliable_edge_relay_app_insights_name'))]"
             ],
             "properties": {
                 "groupShortName": "reliableEdge",
