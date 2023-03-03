@@ -82,8 +82,8 @@
             "defaultValue": "failure anomalies - reliable-edge-relay-app-insights",
             "type": "String"
         },
-        "actiongroups_application_20insights_20smart_20detection_externalid": {
-            "defaultValue": "/subscriptions/33950585-22f0-4aef-915f-880503d43adb/resourceGroups/ml-rg/providers/microsoft.insights/actiongroups/application%20insights%20smart%20detection",
+        "actionGroups_reliable_iot_edge_bindsi03_name": {
+            "defaultValue": "reliable-edge-relay-actionGroup",
             "type": "String"
         }
     },
@@ -422,7 +422,7 @@
             "name": "[parameters('streamingjobs_ingestion_job_name')]",
             "location": "[variables('location')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Devices/IotHubs', 'reliable-edge-relay-iot-hub')]",
+                "[resourceId('Microsoft.Devices/IotHubs', parameters('IotHubs_reliable_edge_relay_iot_hub_name'))]",
                 "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('namespaces_reliable_edge_relay_hub_name'), 'processing-data-gaps')]",
                 "[resourceId('Microsoft.Sql/servers/databases', parameters('servers_reliable_edge_relay_sql_name'), 'IngressMetadata')]",
                 "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('namespaces_reliable_edge_relay_hub_name'), 'detected-data-gaps')]",
@@ -448,9 +448,9 @@
                             "datasource": {
                                 "type": "Microsoft.Devices/IotHubs",
                                 "properties": {
-                                    "iotHubNamespace": "reliable-edge-relay-iot-hub",
+                                    "iotHubNamespace": "[parameters('IotHubs_reliable_edge_relay_iot_hub_name')]",
                                     "sharedAccessPolicyName": "iothubowner",
-                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.Devices/IotHubs/IotHubKeys', 'reliable-edge-relay-iot-hub', 'iothubowner'),'2018-04-01').primaryKey]",
+                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.Devices/IotHubs/IotHubKeys', parameters('IotHubs_reliable_edge_relay_iot_hub_name'), 'iothubowner'),'2018-04-01').primaryKey]",
                                     "endpoint": "messages/events",
                                     "consumerGroupName": "$Default"
                                 }
@@ -475,9 +475,9 @@
                                 "type": "Microsoft.ServiceBus/EventHub",
                                 "properties": {
                                     "eventHubName": "processing-data-gaps",
-                                    "serviceBusNamespace": "reliable-edge-relay-hub",
+                                    "serviceBusNamespace": "[parameters('namespaces_reliable_edge_relay_hub_name')]",
                                     "sharedAccessPolicyName": "StreamAnalyticsAccessKey",
-                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', 'reliable-edge-relay-hub', 'StreamAnalyticsAccessKey'),'2017-04-01').primaryKey]"
+                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', parameters('namespaces_reliable_edge_relay_hub_name'), 'StreamAnalyticsAccessKey'),'2017-04-01').primaryKey]"
                                 }
                             },
                             "compression": {
@@ -517,9 +517,9 @@
                                 "properties": {
                                     "partitionKey": "BatchId",
                                     "eventHubName": "detected-data-gaps",
-                                    "serviceBusNamespace": "reliable-edge-relay-hub",
+                                    "serviceBusNamespace": "[parameters('namespaces_reliable_edge_relay_hub_name')]",
                                     "sharedAccessPolicyName": "StreamAnalyticsAccessKey",
-                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', 'reliable-edge-relay-hub', 'StreamAnalyticsAccessKey'),'2017-04-01').primaryKey]"
+                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', parameters('namespaces_reliable_edge_relay_hub_name'), 'StreamAnalyticsAccessKey'),'2017-04-01').primaryKey]"
                                 }
                             },
                             "serialization": {
@@ -539,9 +539,9 @@
                                 "properties": {
                                     "partitionKey": "BatchId",
                                     "eventHubName": "ingress-metadata",
-                                    "serviceBusNamespace": "reliable-edge-relay-hub",
+                                    "serviceBusNamespace": "[parameters('namespaces_reliable_edge_relay_hub_name')]",
                                     "sharedAccessPolicyName": "StreamAnalyticsAccessKey",
-                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', 'reliable-edge-relay-hub', 'StreamAnalyticsAccessKey'),'2017-04-01').primaryKey]"
+                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', parameters('namespaces_reliable_edge_relay_hub_name'), 'StreamAnalyticsAccessKey'),'2017-04-01').primaryKey]"
                                 }
                             },
                             "serialization": {
@@ -561,9 +561,9 @@
                                 "properties": {
                                     "partitionKey": "BatchId",
                                     "eventHubName": "backfill-requests",
-                                    "serviceBusNamespace": "reliable-edge-relay-hub",
+                                    "serviceBusNamespace": "[parameters('namespaces_reliable_edge_relay_hub_name')]",
                                     "sharedAccessPolicyName": "StreamAnalyticsAccessKey",
-                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', 'reliable-edge-relay-hub', 'StreamAnalyticsAccessKey'),'2017-04-01').primaryKey]"
+                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', parameters('namespaces_reliable_edge_relay_hub_name'), 'StreamAnalyticsAccessKey'),'2017-04-01').primaryKey]"
                                 }
                             },
                             "serialization": {
@@ -612,7 +612,8 @@
             "name": "[parameters('smartdetectoralertrules_failure_anomalies___reliable_edge_relay_app_insights_name')]",
             "location": "global",
             "dependsOn": [
-                "[resourceId('microsoft.insights/components', parameters('components_reliable_edge_relay_app_insights_name'))]"
+                "[resourceId('microsoft.insights/components', parameters('components_reliable_edge_relay_app_insights_name'))]",
+                "[resourceId('microsoft.insights/actionGroups', parameters('actionGroups_reliable_iot_edge_bindsi03_name'))]"
             ],
             "properties": {
                 "description": "Failure Anomalies notifies you of an unusual rise in the rate of failed HTTP requests or dependency calls.",
@@ -627,9 +628,33 @@
                 ],
                 "actionGroups": {
                     "groupIds": [
-                        "[parameters('actiongroups_application_20insights_20smart_20detection_externalid')]"
+                        "[subscriptionResourceId('microsoft.insights/actionGroups', parameters('actionGroups_reliable_iot_edge_bindsi03_name'))]"
                     ]
                 }
+            }
+        },
+        {
+            "type": "microsoft.insights/actionGroups",
+            "apiVersion": "2022-06-01",
+            "name": "[parameters('actionGroups_reliable_iot_edge_bindsi03_name')]",
+            "location": "Global",
+            "dependsOn": [
+                "[resourceId('microsoft.insights/components', parameters('components_reliable_edge_relay_app_insights_name'))]",
+            ],
+            "properties": {
+                "groupShortName": "reliableEdge",
+                "enabled": true,
+                "emailReceivers": [],
+                "smsReceivers": [],
+                "webhookReceivers": [],
+                "eventHubReceivers": [],
+                "itsmReceivers": [],
+                "azureAppPushReceivers": [],
+                "automationRunbookReceivers": [],
+                "voiceReceivers": [],
+                "logicAppReceivers": [],
+                "azureFunctionReceivers": [],
+                "armRoleReceivers": []
             }
         },
         {
