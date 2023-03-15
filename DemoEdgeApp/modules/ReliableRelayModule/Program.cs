@@ -104,7 +104,7 @@ namespace ReliableRelayModule
             Console.WriteLine($"SkipMessage method invocation ");
             var result = new MethodResponsePayload() { DirectMethodResponse = $"Next message will be skipped." };
 
-            Interlocked.Exchange(ref _skipNextMessage, 1); //skip the msg, change the msg to 1.
+            Interlocked.Exchange(ref _skipNextMessage, 1); 
 
             var outResult = JsonConvert.SerializeObject(result, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
             return Task.FromResult(new MethodResponse(Encoding.UTF8.GetBytes(outResult), 200));
@@ -202,9 +202,6 @@ namespace ReliableRelayModule
                 if (0 == Interlocked.Exchange(ref _skipNextMessage, 0))
                 {
                     await moduleClient.SendEventAsync("output1", pipeMessage);
-                    // byte[] pipemessageBytes = pipeMessage.GetBytes();
-                    // string messagePiped = Encoding.UTF8.GetString(pipemessageBytes);
-                    // Console.WriteLine($"Received message: {counterValue}, Body: [{messagePiped}]");
                     Console.WriteLine("Received message sent");
                 }
                 else
