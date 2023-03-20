@@ -9,7 +9,7 @@
     "BackfillMethodName": "BackfillMethod",
     "DetectionEventHubName": "detected-data-gaps",
     "ExecutionEventHubName": "backfill-requests",
-    "IoTDeviceId": "[Add your connection string here]",
+    "IoTDeviceId": "",
     "IoTMethodId": "ReliableRelayModule",
     "StorageQueueName": "data-gap-backfill-requests",
     "DirectMethodResponseTimeoutSeconds": "10",

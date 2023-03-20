@@ -10,11 +10,11 @@
             "minDockerVersion": "v1.25",
             "loggingOptions": "",
             "registryCredentials": {
-                "relayacrcc06": {
-                  "address": "${ACR_ADDR}",
-                  "password": "${ACR_PW}",
-                  "username": "${ACR_USER}"
-                }
+              "relayacr": {
+                "address": "${ACR_ADDR}",
+                "password": "${ACR_PW}",
+                "username": "${ACR_USER}"
+              }
             }
           }
         },
