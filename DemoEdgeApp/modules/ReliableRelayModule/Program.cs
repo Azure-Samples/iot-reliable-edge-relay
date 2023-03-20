@@ -202,9 +202,6 @@ namespace ReliableRelayModule
                 if (0 == Interlocked.Exchange(ref _skipNextMessage, 0))
                 {
                     await moduleClient.SendEventAsync("output1", pipeMessage);
-                    // byte[] pipemessageBytes = pipeMessage.GetBytes();
-                    // string messagePiped = Encoding.UTF8.GetString(pipemessageBytes);
-                    // Console.WriteLine($"Received message: {counterValue}, Body: [{messagePiped}]");
                     Console.WriteLine("Received message sent");
                 }
                 else

@@ -221,7 +221,6 @@
             "kind": "web",
             "properties": {
                 "Application_Type": "web",
-                //"Flow_Type": "Redfield",
                 "Request_Source": "IbizaWebAppExtensionCreate"
             },
             "resources": [
@@ -520,7 +519,7 @@
                                 "type": "Microsoft.Sql/Server/Database",
                                 "properties": {
                                     "table": "DataWindows",
-                                    "server": "[concat(parameters('servers_reliable_edge_relay_sql_name'), '.database.windows.net')]", // cc modify
+                                    "server": "[concat(parameters('servers_reliable_edge_relay_sql_name'), '.database.windows.net')]", 
                                     "database": "IngressMetadata",
                                     "user": "[parameters('servers_reliable_edge_relay_sql_username')]",
                                     "password": "[parameters('servers_reliable_edge_relay_sql_password')]"
@@ -1011,7 +1010,7 @@
             ],
             "properties": {
                 "hardwareProfile": {
-                    "vmSize": "Standard_DC1ds_v3"//Standard_DC1ds_v3
+                    "vmSize": "Standard_DC1ds_v3"
                 },
                 "storageProfile": {
                     "imageReference": {
