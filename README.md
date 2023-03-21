@@ -105,13 +105,13 @@ This solution comes in three distinct parts:
 Running the sample requires all three above solution components to be in place. The steps for provisioning this solution are in order:
 
 1. Provision the Azure resources using the provided ARM template.
-2. Create a new IoT Edge Device.
-3. Deploy the provided azure functions and update the SQL connection string in the application settings.
-4. Build and deploy the provided Edge application the newly created Edge device.
+2. Create a new IoT Edge Device with the VM and provision to the IoT Hub. You may follow the guidance [here](https://learn.microsoft.com/en-us/azure/iot-edge/how-to-provision-single-device-linux-symmetric?view=iotedge-1.4&tabs=azure-portal%2Cubuntu).
+3. Deploy the provided azure functions and update the SQL, Storage, EventHub and IoTHub's connection strings in the application settings.
+4. Build and deploy the provided Edge application the newly created IoT Edge device.
 
 If all goes well, you should be able to see some telemetry flowing throughout the system. This telemetry module is the same with the C# quick start sample that comes with the IoT Edge Dev Experience tools. This periodic telemetry message is routed to the `ReliableRelayModule`, where it's piped (see `PipeMessage` in `ReliableRelayModule`) and enhanced with Start and End indices, in this case timestamps. Leveraging these indices, we can examine the received messages in Azure in real time and determine if any data gap exists. In that case, a back fill request is triggered to the specific device with the missing data indices.
 
-To to simulate a data gap, you'll need to invoke a direct method on the running device. Invoking the `SkipMessageMethod` direct method, the next message in the `PipeMessage` will be omitted. This in a few seconds will be detected an a `BackfillMethod` direct method request will be triggered by the running Azure functions, requesting the missing data.
+To to simulate a data gap, you'll need to invoke a Relay module direct method on the running device. Invoking the `SkipMessageMethod` direct method, the next message in the `PipeMessage` will be omitted. This in a few seconds will be detected an a `BackfillMethod` direct method request will be triggered by the running Azure functions, requesting the missing data.
 
 ## Contributing
 

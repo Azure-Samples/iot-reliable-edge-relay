@@ -104,7 +104,7 @@ namespace ReliableRelayModule
             Console.WriteLine($"SkipMessage method invocation ");
             var result = new MethodResponsePayload() { DirectMethodResponse = $"Next message will be skipped." };
 
-            Interlocked.Exchange(ref _skipNextMessage, 1);
+            Interlocked.Exchange(ref _skipNextMessage, 1); 
 
             var outResult = JsonConvert.SerializeObject(result, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
             return Task.FromResult(new MethodResponse(Encoding.UTF8.GetBytes(outResult), 200));
