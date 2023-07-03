@@ -1,5 +1,5 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "virtualMachines_edge_vm_name": {
@@ -12,18 +12,6 @@
         },
         "virtualMachines_edge_vm_password": {
             "defaultValue": "Edgeuser4ever",
-            "type": "SecureString"
-        },
-        "servers_reliable_edge_relay_sql_name": {
-            "defaultValue": "reliable-edge-relay-sql",
-            "type": "String"
-        },
-        "servers_reliable_edge_relay_sql_username": {
-            "defaultValue": "user",
-            "type": "String"
-        },
-        "servers_reliable_edge_relay_sql_password": {
-            "defaultValue": "Sql4ever",
             "type": "SecureString"
         },
         "networkInterfaces_edge_vm758_name": {
@@ -85,10 +73,54 @@
         "actionGroups_reliable_iot_edge_bindsi03_name": {
             "defaultValue": "reliable-edge-relay-actionGroup",
             "type": "String"
+        },
+        "adxClusterName": {
+            "defaultValue": "reliable-edge-relay-adxCluster",
+            "type": "string"
+        },
+        "adxDatabaseName": {
+            "defaultValue": "reliable-edge-relay-adxDatabase",
+            "type": "string"
+        },
+        "adxScriptName": {
+            "defaultValue": "reliable-edge-relay-adxScript",
+            "type": "string"
+        },
+        "adxTableName": {
+            "defaultValue": "opcuaTelemetryTable",
+            "type": "string"
+        },
+        "adxMappingName": {
+            "defaultValue": "opcua_telemetry_mapping",
+            "type": "string"
+        },
+        "adxDataFormat": {
+            "type": "string",
+            "defaultValue": "json",
+            "metadata": {
+                "description": "Specifies the data format"
+            }
+        },
+        "adxDatabaseRouting": {
+            "type": "string",
+            "defaultValue": "Single",
+            "metadata": {
+                "description": "The database routing for the connection. If you set the value to **Single**, the data connection will be routed to a single database in the cluster as specified in the *databaseName* setting. If you set the value to **Multi**, you can override the default target database using the *Database* EventData property."
+            }
+        },
+        "adxConsumerGroupName": {
+            "defaultValue": "relayadxcg",
+            "type": "string"
+        },
+        "adxDataConnectionName": {
+            "type": "string",
+            "defaultValue": "reliable-edge-relay-adxDataConnection"
         }
     },
     "variables": {
         "location": "[resourceGroup().location]",
+        "subscriptionId": "[subscription().subscriptionId]",
+        "resourceGroup": "[resourceGroup().name]",
         "dcs": ""
     },
     "resources": [
@@ -197,6 +229,78 @@
             }
         },
         {
+            "type": "Microsoft.Devices/IotHubs/EventHubEndpoints/ConsumerGroups",
+            "apiVersion": "2022-04-30-preview",
+            "name": "[concat(parameters('IotHubs_reliable_edge_relay_iot_hub_name'), '/events/', parameters('adxConsumerGroupName'))]",
+            "location": "[variables('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Devices/IotHubs', parameters('IotHubs_reliable_edge_relay_iot_hub_name'))]"
+            ],
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.Kusto/clusters",
+            "apiVersion": "2021-01-01",
+            "name": "[parameters('adxClusterName')]",
+            "location": "[variables('location')]",
+            "sku": {
+                "name": "Dev(No SLA)_Standard_E2a_v4",
+                "tier": "Basic",
+                "capacity": 1
+            },
+            "resources": [
+                {
+                    "name": "[parameters('adxDatabaseName')]",
+                    "type": "databases",
+                    "apiVersion": "2021-01-01",
+                    "location": "[variables('location')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Kusto/clusters', parameters('adxClusterName'))]"
+                    ],
+                    "kind": "ReadWrite",
+                    "properties": {
+                        "softDeletePeriodInDays": 365,
+                        "hotCachePeriodInDays": 31
+                    }
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.Kusto/Clusters/Databases/Scripts",
+            "apiVersion": "2022-02-01",
+            "name": "[concat(parameters('adxClusterName'), '/', parameters('adxDatabaseName'), '/', parameters('adxScriptName'))]",
+            "dependsOn": [
+                        "[resourceId('Microsoft.Kusto/clusters', parameters('adxClusterName'))]",
+                        "[resourceId('Microsoft.Kusto/clusters/databases', parameters('adxClusterName'), parameters('adxDatabaseName'))]"
+                    ],
+            "properties": {
+                "scriptContent": ".create table opcuaTelemetryTable ( timestamp:string, deviceID:string, nodeID:string, value:string)\n\n.create table opcuaTelemetryTable ingestion json mapping \"opcua_telemetry_mapping\"\n'['\n'{\"column\":\"timestamp\",\"path\":\"$[\\'timestamp\\']\",\"datatype\":\"\",\"transform\":null},{\"column\":\"deviceID\",\"path\":\"$[\\'deviceID\\']\",\"datatype\":\"\",\"transform\":null},{\"column\":\"nodeID\",\"path\":\"$[\\'nodeID\\']\",\"datatype\":\"\",\"transform\":null},{\"column\":\"value\",\"path\":\"$[\\'value\\']\",\"datatype\":\"\",\"transform\":null}'\n']'\n",
+                "continueOnErrors": false,
+                "forceUpdateTag": "[utcNow()]"
+            }
+        },
+        {
+            "type": "Microsoft.Kusto/Clusters/Databases/DataConnections",
+            "apiVersion": "2019-09-07",
+            "name": "[concat(parameters('adxClusterName'), '/', parameters('adxDatabaseName'), '/', parameters('adxDataConnectionName'))]",
+            "location": "[variables('location')]",
+            "kind": "IotHub",
+            "dependsOn": [
+                        "[resourceId('Microsoft.Kusto/clusters', parameters('adxClusterName'))]",
+                        "[resourceId('Microsoft.Kusto/clusters/databases', parameters('adxClusterName'), parameters('adxDatabaseName'))]",
+                        "[resourceId('Microsoft.Kusto/Clusters/Databases/Scripts', parameters('adxClusterName'), parameters('adxDatabaseName'), parameters('adxScriptName'))]"
+                    ],
+            "properties": {
+                "iotHubResourceId": "[resourceId(variables('subscriptionId'), variables('resourceGroup'), 'Microsoft.Devices/IotHubs', parameters('IotHubs_reliable_edge_relay_iot_hub_name'))]",
+                "consumerGroup": "[parameters('adxConsumerGroupName')]",
+                "sharedAccessPolicyName": "iothubowner",
+                "tableName": "[parameters('adxTableName')]",
+                "mappingRuleName": "[parameters('adxMappingName')]",
+                "dataFormat": "[parameters('adxDataFormat')]",
+                "databaseRouting": "[parameters('adxDatabaseRouting')]"
+            }
+        },
+        {
             "type": "Microsoft.EventHub/namespaces",
             "apiVersion": "2018-01-01-preview",
             "name": "[parameters('namespaces_reliable_edge_relay_hub_name')]",
@@ -221,6 +325,7 @@
             "kind": "web",
             "properties": {
                 "Application_Type": "web",
+                //"Flow_Type": "Redfield",
                 "Request_Source": "IbizaWebAppExtensionCreate"
             },
             "resources": [
@@ -324,55 +429,6 @@
             }
         },
         {
-            "type": "Microsoft.Sql/servers",
-            "apiVersion": "2015-05-01-preview",
-            "name": "[parameters('servers_reliable_edge_relay_sql_name')]",
-            "location": "[variables('location')]",
-            "kind": "v12.0",
-            "properties": {
-                "administratorLogin": "[parameters('servers_reliable_edge_relay_sql_username')]",
-                "administratorLoginPassword": "[parameters('servers_reliable_edge_relay_sql_password')]",
-                "version": "12.0"
-            }
-        },
-        {
-            "type": "Microsoft.Sql/servers/firewallRules",
-            "apiVersion": "2015-05-01-preview",
-            "name": "[concat(parameters('servers_reliable_edge_relay_sql_name'), '/AllowAllWindowsAzureIps')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Sql/servers', parameters('servers_reliable_edge_relay_sql_name'))]"
-            ],
-            "properties": {
-                "startIpAddress": "0.0.0.0",
-                "endIpAddress": "0.0.0.0"
-            }
-        },
-        {
-            "type": "Microsoft.Sql/servers/databases",
-            "apiVersion": "2017-10-01-preview",
-            "name": "[concat(parameters('servers_reliable_edge_relay_sql_name'), '/IngressMetadata')]",
-            "location": "[variables('location')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Sql/servers', parameters('servers_reliable_edge_relay_sql_name'))]"
-            ],
-            "sku": {
-                "name": "GP_Gen5",
-                "tier": "GeneralPurpose",
-                "family": "Gen5",
-                "capacity": 2
-            },
-            "kind": "v12.0,user,vcore",
-            "properties": {
-                "collation": "SQL_Latin1_General_CP1_CI_AS",
-                "maxSizeBytes": 34359738368,
-                "catalogCollation": "SQL_Latin1_General_CP1_CI_AS",
-                "zoneRedundant": false,
-                "licenseType": "LicenseIncluded",
-                "readScale": "Disabled",
-                "readReplicaCount": 0
-            }
-        },
-        {
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2019-04-01",
             "name": "[parameters('storageAccounts_reliableedgerelaydiag_name')]",
@@ -441,11 +497,8 @@
             "location": "[variables('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Devices/IotHubs', parameters('IotHubs_reliable_edge_relay_iot_hub_name'))]",
-                "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('namespaces_reliable_edge_relay_hub_name'), 'processing-data-gaps')]",
-                "[resourceId('Microsoft.Sql/servers/databases', parameters('servers_reliable_edge_relay_sql_name'), 'IngressMetadata')]",
                 "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('namespaces_reliable_edge_relay_hub_name'), 'detected-data-gaps')]",
-                "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('namespaces_reliable_edge_relay_hub_name'), 'ingress-metadata')]",
-                "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('namespaces_reliable_edge_relay_hub_name'), 'processing-data-gaps')]"
+                "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('namespaces_reliable_edge_relay_hub_name'), 'ingress-metadata')]"  
             ],
             "properties": {
                 "sku": {
@@ -484,49 +537,9 @@
                             },
                             "etag": "911e4f52-94b7-41bb-9dd7-585866645259"
                         }
-                    },
-                    {
-                        "name": "processed-data-gaps",
-                        "properties": {
-                            "type": "Stream",
-                            "datasource": {
-                                "type": "Microsoft.ServiceBus/EventHub",
-                                "properties": {
-                                    "eventHubName": "processing-data-gaps",
-                                    "serviceBusNamespace": "[parameters('namespaces_reliable_edge_relay_hub_name')]",
-                                    "sharedAccessPolicyName": "StreamAnalyticsAccessKey",
-                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', parameters('namespaces_reliable_edge_relay_hub_name'), 'StreamAnalyticsAccessKey'),'2017-04-01').primaryKey]"
-                                }
-                            },
-                            "compression": {
-                                "type": "None"
-                            },
-                            "serialization": {
-                                "type": "Json",
-                                "properties": {
-                                    "encoding": "UTF8"
-                                }
-                            },
-                            "etag": "2acc6849-0032-4ab6-b800-7e1fdb01f881"
-                        }
                     }
                 ],
                 "outputs": [
-                    {
-                        "name": "data-windows-sql",
-                        "properties": {
-                            "datasource": {
-                                "type": "Microsoft.Sql/Server/Database",
-                                "properties": {
-                                    "table": "DataWindows",
-                                    "server": "[concat(parameters('servers_reliable_edge_relay_sql_name'), '.database.windows.net')]", 
-                                    "database": "IngressMetadata",
-                                    "user": "[parameters('servers_reliable_edge_relay_sql_username')]",
-                                    "password": "[parameters('servers_reliable_edge_relay_sql_password')]"
-                                }
-                            }
-                        }
-                    },
                     {
                         "name": "detected-data-gaps",
                         "properties": {
@@ -570,34 +583,12 @@
                                 }
                             }
                         }
-                    },
-                    {
-                        "name": "processing-data-gaps",
-                        "properties": {
-                            "datasource": {
-                                "type": "Microsoft.ServiceBus/EventHub",
-                                "properties": {
-                                    "partitionKey": "BatchId",
-                                    "eventHubName": "backfill-requests",
-                                    "serviceBusNamespace": "[parameters('namespaces_reliable_edge_relay_hub_name')]",
-                                    "sharedAccessPolicyName": "StreamAnalyticsAccessKey",
-                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', parameters('namespaces_reliable_edge_relay_hub_name'), 'StreamAnalyticsAccessKey'),'2017-04-01').primaryKey]"
-                                }
-                            },
-                            "serialization": {
-                                "type": "Json",
-                                "properties": {
-                                    "encoding": "UTF8",
-                                    "format": "LineSeparated"
-                                }
-                            }
-                        }
                     }
                 ],
                 "transformation": {
                     "name": "processing-query",
                     "properties": {
-                        "query": "with\r\ndetection\r\nas\r\n(\r\n    select \r\n        *\r\n    from [iot-hub] partition by PartitionId\r\n    where StartWindow > LAG(EndWindow) OVER (PARTITION BY BatchId LIMIT DURATION(hour, 1))\r\n),\r\ndataWindows\r\nas\r\n(\r\n    select \r\n        *\r\n    from [iot-hub] partition by PartitionId\r\n    where StartWindow = LAG(EndWindow) OVER (PARTITION BY BatchId LIMIT DURATION(hour, 1))\r\n)\r\n\r\nSelect detection.BatchId, detection.StartWindow, detection.EndWindow\r\ninto [detected-data-gaps]\r\nfrom detection\r\n\r\nSelect dataWindows.BatchId, dataWindows.StartWindow, dataWindows.EndWindow\r\ninto [data-windows-sql]\r\nfrom dataWindows\r\n\r\nSelect *\r\ninto [ingress-metadata]\r\nfrom [iot-hub]",
+                        "query": "with\r\ndetection\r\nas\r\n(\r\n    select\r\n    PartitionId,\r\n    GetMetadataPropertyValue([iot-hub], '[User].[deviceID]') as deviceID,\r\n    GetMetadataPropertyValue([iot-hub], '[User].[batchId]') as batchID,\r\n    GetMetadataPropertyValue([iot-hub], '[User].[EndWindow]') as currEndWindow,\r\n    LAG(GetMetadataPropertyValue([iot-hub], '[User].[EndWindow]')) over (PARTITION BY PartitionId LIMIT DURATION(hour, 48)) as previousEndWindow,\r\n    GetMetadataPropertyValue([iot-hub], '[User].[StartWindow]') as currStartWindow,\r\n    GetMetadataPropertyValue([iot-hub], '[User].[firstTsInBatch]') as currfirstTsInBatch,\r\n    LAG(GetMetadataPropertyValue([iot-hub], '[User].[lastTsInBatch]')) over (PARTITION BY PartitionId LIMIT DURATION(hour, 48)) as previousLastTsInBatch\r\n    from [iot-hub] partition by PartitionId\r\n),\r\ndataWindows as\r\n(\r\n    select\r\n    *,\r\n    PartitionId,\r\n    GetMetadataPropertyValue([iot-hub], '[User].[StartWindow]') as currStartWindow,\r\n    GetMetadataPropertyValue([iot-hub], '[User].[EndWindow]') as currEndWindow,\r\n    LAG(GetMetadataPropertyValue([iot-hub], '[User].[EndWindow]')) over (PARTITION BY PartitionId LIMIT DURATION(hour, 48)) as previousEndWindow,\r\n    GetMetadataPropertyValue([iot-hub], '[User].[firstTsInBatch]') as currfirstTsInBatch,\r\n  LAG(GetMetadataPropertyValue([iot-hub], '[User].[lastTsInBatch]')) over (PARTITION BY PartitionId LIMIT DURATION(hour, 48)) as previousLastTsInBatch\r\n    from [iot-hub] partition by PartitionId\r\n)\r\nselect detection.deviceID, detection.currfirstTsInBatch, detection.previousLastTsInBatch,detection.currStartWindow, detection.previousEndWindow\r\ninto [detected-data-gaps]\r\nfrom detection\r\nWHERE detection.previousEndWindow <> detection.currEndWindow AND CAST(detection.currStartWindow as bigint) > CAST(detection.previousEndWindow as bigint)\r\nselect *\r\ninto [ingress-metadata]\r\nfrom dataWindows\r\nWHERE CAST(dataWindows.currStartWindow as bigint) = CAST(dataWindows.previousEndWindow as bigint)\r\nOR CAST(dataWindows.currEndWindow as bigint) = CAST(dataWindows.previousEndWindow as bigint)\r\n",
                         "streamingUnits": 1
                     }
                 }
@@ -709,20 +700,6 @@
         {
             "type": "Microsoft.EventHub/namespaces/eventhubs",
             "apiVersion": "2017-04-01",
-            "name": "[concat(parameters('namespaces_reliable_edge_relay_hub_name'), '/backfill-requests')]",
-            "location": "[variables('location')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaces_reliable_edge_relay_hub_name'))]"
-            ],
-            "properties": {
-                "messageRetentionInDays": 1,
-                "partitionCount": 1,
-                "status": "Active"
-            }
-        },
-        {
-            "type": "Microsoft.EventHub/namespaces/eventhubs",
-            "apiVersion": "2017-04-01",
             "name": "[concat(parameters('namespaces_reliable_edge_relay_hub_name'), '/detected-data-gaps')]",
             "location": "[variables('location')]",
             "dependsOn": [
@@ -738,20 +715,6 @@
             "type": "Microsoft.EventHub/namespaces/eventhubs",
             "apiVersion": "2017-04-01",
             "name": "[concat(parameters('namespaces_reliable_edge_relay_hub_name'), '/ingress-metadata')]",
-            "location": "[variables('location')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaces_reliable_edge_relay_hub_name'))]"
-            ],
-            "properties": {
-                "messageRetentionInDays": 1,
-                "partitionCount": 1,
-                "status": "Active"
-            }
-        },
-        {
-            "type": "Microsoft.EventHub/namespaces/eventhubs",
-            "apiVersion": "2017-04-01",
-            "name": "[concat(parameters('namespaces_reliable_edge_relay_hub_name'), '/processing-data-gaps')]",
             "location": "[variables('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaces_reliable_edge_relay_hub_name'))]"
@@ -1010,7 +973,7 @@
             ],
             "properties": {
                 "hardwareProfile": {
-                    "vmSize": "Standard_DC1ds_v3"
+                    "vmSize": "Standard_DC1ds_v3"//Standard_DC1ds_v3
                 },
                 "storageProfile": {
                     "imageReference": {
@@ -1068,17 +1031,6 @@
         {
             "type": "Microsoft.EventHub/namespaces/eventhubs/consumergroups",
             "apiVersion": "2017-04-01",
-            "name": "[concat(parameters('namespaces_reliable_edge_relay_hub_name'), '/backfill-requests/$Default')]",
-            "location": "[variables('location')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('namespaces_reliable_edge_relay_hub_name'), 'backfill-requests')]",
-                "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaces_reliable_edge_relay_hub_name'))]"
-            ],
-            "properties": {}
-        },
-        {
-            "type": "Microsoft.EventHub/namespaces/eventhubs/consumergroups",
-            "apiVersion": "2017-04-01",
             "name": "[concat(parameters('namespaces_reliable_edge_relay_hub_name'), '/detected-data-gaps/$Default')]",
             "location": "[variables('location')]",
             "dependsOn": [
@@ -1094,17 +1046,6 @@
             "location": "[variables('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('namespaces_reliable_edge_relay_hub_name'), 'ingress-metadata')]",
-                "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaces_reliable_edge_relay_hub_name'))]"
-            ],
-            "properties": {}
-        },
-        {
-            "type": "Microsoft.EventHub/namespaces/eventhubs/consumergroups",
-            "apiVersion": "2017-04-01",
-            "name": "[concat(parameters('namespaces_reliable_edge_relay_hub_name'), '/processing-data-gaps/$Default')]",
-            "location": "[variables('location')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('namespaces_reliable_edge_relay_hub_name'), 'processing-data-gaps')]",
                 "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaces_reliable_edge_relay_hub_name'))]"
             ],
             "properties": {}

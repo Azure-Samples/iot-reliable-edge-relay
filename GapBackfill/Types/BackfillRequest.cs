@@ -1,4 +1,3 @@
-
 using System;
 
 namespace Azure.Samples.ReliableEdgeRelay.Types
@@ -6,11 +5,12 @@ namespace Azure.Samples.ReliableEdgeRelay.Types
     /// <summary>
     /// The BackfillRequest is the request sent to the device to fill a single data gap
     /// </summary>
-    internal class BackfillRequest
+    public class BackfillRequest
     {
-        public DateTime StartWindow { get; set; }
-        public DateTime EndWindow { get; set; }
-        public string BatchId { get; set; }
-        public DateTime Created { get; set; }
+        public string DeviceID { get; set; }
+        public string BackfillStartTime { get; set; }
+        public string BackfillEndTime { get; set; }
+        
+        public DateTime CreatedAt { get; set; }
     }
 }

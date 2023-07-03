@@ -3,55 +3,79 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "virtualMachines_edge_vm_name": {
-            "value": null
-        },
-        "servers_reliable_edge_relay_sql_name": {
-            "value": null
+            "value": ""
         },
         "networkInterfaces_edge_vm758_name": {
-            "value": null
+            "value": ""
         },
         "publicIPAddresses_edge_vm_ip_name": {
-            "value": null
+            "value": ""
         },
         "sites_reliable_edge_relay_function_name": {
-            "value": null
+            "value": ""
         },
         "networkSecurityGroups_edge_vm_nsg_name": {
-            "value": null
+            "value": ""
         },
         "serverfarms_ASP_reliableedgerelay_9228_name": {
-            "value": null
+            "value": ""
         },
         "IotHubs_reliable_edge_relay_iot_hub_name": {
-            "value": null
+            "value": ""
         },
         "namespaces_reliable_edge_relay_hub_name": {
-            "value": null
+            "value": ""
         },
         "streamingjobs_ingestion_job_name": {
-            "value": null
+            "value": ""
         },
         "storageAccounts_reliableedgerelaydiag_name": {
-            "value": null
+            "value": ""
         },
         "virtualNetworks_reliable_edge_relay_vnet_name": {
-            "value": null
+            "value": ""
         },
         "storageAccounts_reliableedgerelaystorage_name": {
-            "value": null
+            "value": ""
         },
         "components_reliable_edge_relay_app_insights_name": {
-            "value": null
+            "value": ""
         },
         "workspaces_reliable_edge_relay_log_analytics_name": {
-            "value": null
+            "value": ""
         },
         "smartdetectoralertrules_failure_anomalies___reliable_edge_relay_app_insights_name": {
-            "value": null
+            "value": ""
         },
         "actionGroups_reliable_iot_edge_bindsi03_name": {
-            "value": null
+            "value": ""
+        },
+        "adxClusterName": {
+            "value": ""
+        },
+        "adxDatabaseName": {
+            "value": ""
+        },
+        "adxScriptName": {
+            "value": ""
+        },
+        "adxTableName": {
+            "value": ""
+        },
+        "adxMappingName": {
+            "value": ""
+        },
+        "adxDataFormat": {
+            "value": "json"
+        },
+        "adxDatabaseRouting": {
+            "value": "Single"
+        },
+        "adxConsumerGroupName": {
+            "value": ""
+        },
+        "adxDataConnectionName": {
+            "value": ""
         }
     }
 }

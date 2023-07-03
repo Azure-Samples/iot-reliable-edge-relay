@@ -155,6 +155,62 @@
       "command": "host start",
       "isBackground": true,
       "problemMatcher": "$func-dotnet-watch"
+    },
+    {
+      "type": "docker-build",
+      "label": "docker-build: debug",
+      "dependsOn": [
+        "build"
+      ],
+      "dockerBuild": {
+        "tag": "iotreliableedgerelayintegrateorcherelaydockerfilenowrapperrestored:dev",
+        "target": "base",
+        "dockerfile": "${workspaceFolder}/DemoEdgeApp/modules/ReliableRelayModule/Dockerfile",
+        "context": "${workspaceFolder}",
+        "pull": true
+      },
+      "netCore": {
+        "appProject": "${workspaceFolder}/DemoEdgeApp/modules/ReliableRelayModule/ReliableRelayModule.csproj"
+      }
+    },
+    {
+      "type": "docker-build",
+      "label": "docker-build: release",
+      "dependsOn": [
+        "build"
+      ],
+      "dockerBuild": {
+        "tag": "iotreliableedgerelayintegrateorcherelaydockerfilenowrapperrestored:latest",
+        "dockerfile": "${workspaceFolder}/DemoEdgeApp/modules/ReliableRelayModule/Dockerfile",
+        "context": "${workspaceFolder}",
+        "pull": true
+      },
+      "netCore": {
+        "appProject": "${workspaceFolder}/DemoEdgeApp/modules/ReliableRelayModule/ReliableRelayModule.csproj"
+      }
+    },
+    {
+      "type": "docker-run",
+      "label": "docker-run: debug",
+      "dependsOn": [
+        "docker-build: debug"
+      ],
+      "dockerRun": {},
+      "netCore": {
+        "appProject": "${workspaceFolder}/DemoEdgeApp/modules/ReliableRelayModule/ReliableRelayModule.csproj",
+        "enableDebugging": true
+      }
+    },
+    {
+      "type": "docker-run",
+      "label": "docker-run: release",
+      "dependsOn": [
+        "docker-build: release"
+      ],
+      "dockerRun": {},
+      "netCore": {
+        "appProject": "${workspaceFolder}/DemoEdgeApp/modules/ReliableRelayModule/ReliableRelayModule.csproj"
+      }
     }
   ]
 }

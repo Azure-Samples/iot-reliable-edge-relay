@@ -10,11 +10,11 @@
             "minDockerVersion": "v1.25",
             "loggingOptions": "",
             "registryCredentials": {
-              "relayacr": {
-                "address": "${ACR_ADDR}",
-                "password": "${ACR_PW}",
-                "username": "${ACR_USER}"
-              }
+                "relayacr": {
+                  "address": "${CONTAINER_REGISTRY_ADDRESS}",
+                  "password": "${CONTAINER_REGISTRY_PASSWORD}",
+                  "username": "${CONTAINER_REGISTRY_USERNAME}"
+                }
             }
           }
         },
@@ -56,7 +56,113 @@
             }
           }
         },
-        "modules": {
+        "modules": {        
+          "influxdb": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "${MODULES.influxdb}",
+              "createOptions": {
+                "Hostname": "influxdb",
+                "Env": [
+                  "INFLUX_DATABASE=${INFLUX_DATABASE}",
+                  "INLFUX_ADMIN_USER=${INFLUX_ADMIN_USER}",
+                  "INFLUX_ADMIN_PASS=${INFLUX_ADMIN_PASS}"
+                ],
+                "HostConfig": {
+                  "Binds": [
+                    "${INFLUX_BIND}"
+                  ],
+                  "PortBindings": {
+                    "8086/tcp": [
+                      {
+                        "HostPort": "8086"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "opcplc": {
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "startupOrder": 1,
+            "env": {
+                "BypassCertVerification": {
+                    "value": "true"
+                }
+            },
+            "settings": {
+                "image": "mcr.microsoft.com/iotedge/opc-plc:2.5.0",
+                "createOptions": {
+                    "Hostname": "opcplc",
+                    "Cmd": [
+                        "--pn=50000",
+                        "--sn=250",
+                        "--sr=10",
+                        "--st=uint",
+                        "--fn=50",
+                        "--fr=1",
+                        "--ft=uint",
+                        "--gn=5",
+                        "--autoaccept",
+                        "--sph"
+                    ],
+                    "ExposedPorts": {
+                        "50000/tcp": {},
+                        "8080/tcp": {}
+                    },
+                    "HostConfig": {
+                        "PortBindings": {
+                            "50000/tcp": [
+                                {
+                                    "HostPort": "50000"
+                                }
+                            ],
+                            "8080/tcp": [
+                                {
+                                    "HostPort": "8080"
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+          },
+          "opcpublisher": {
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "startupOrder": 2,
+            "env": {
+                "BypassCertVerification": {
+                    "value": "true"
+                }
+            },
+            "settings": {
+                "image": "mcr.microsoft.com/iotedge/opc-publisher:2.8.3",
+                "createOptions": {
+                    "Hostname": "opcpublisher",
+                    "Cmd": [
+                        "--pf=/appdata/pn.json",                    
+                        "--aa",
+                        "--si=1"
+                    ],
+                    "HostConfig": {
+                        "Binds": [
+                          "/iiotedge:/appdata"
+                        ],
+                        "ExtraHosts": [
+                          "localhost:127.0.0.1"
+                        ]
+                    }
+                }
+            }
+          },
           "ReliableRelayModule": {
             "version": "1.0",
             "type": "docker",
@@ -64,17 +170,16 @@
             "restartPolicy": "always",
             "settings": {
               "image": "${MODULES.ReliableRelayModule}",
-              "createOptions": {}
-            }
-          },
-          "SimulatedTemperatureSensor": {
-            "version": "1.0",
-            "type": "docker",
-            "status": "running",
-            "restartPolicy": "always",
-            "settings": {
-              "image": "mcr.microsoft.com/azureiotedge-simulated-temperature-sensor:1.0",
-              "createOptions": {}
+              "createOptions": {
+                "Env": [
+                  "INFLUX_URL=${INFLUX_URL}",
+                  "INFLUX_USERNAME=${INFLUX_USERNAME}",
+                  "INFLUX_PASSWORD=${INFLUX_PASSWORD}",
+                  "INFLUX_RETENTION_IN_DAYS=${INFLUX_RETENTION_IN_DAYS}",
+                  "INFLUX_DB_NAME=${INFLUX_DB_NAME}",
+                  "INFLUX_DB_MEASUREMENT_NAME=${INFLUX_DB_MEASUREMENT_NAME}"
+                ]
+              }
             }
           }
         }
@@ -84,7 +189,7 @@
       "properties.desired": {
         "schemaVersion": "1.1",
         "routes": {
-          "sensorToReliableRelayModule": "FROM /messages/modules/SimulatedTemperatureSensor/outputs/temperatureOutput INTO BrokeredEndpoint(\"/modules/ReliableRelayModule/inputs/input1\")",
+          "PublisherToReliableRelayModule": "FROM /messages/modules/opcpublisher INTO BrokeredEndpoint(\"/modules/ReliableRelayModule/inputs/input1\")",
           "ReliableRelayModuleToIoTHub": "FROM /messages/modules/ReliableRelayModule/outputs/* INTO $upstream"
         },
         "storeAndForwardConfiguration": {

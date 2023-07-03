@@ -2,16 +2,16 @@
     "$schema-version": "0.0.1",
     "description": "",
     "image": {
-        "repository": "${CONTAINER_REGISTRY_ADDRESS}/reliable-edge-relay",
+        "repository": "${CONTAINER_REGISTRY_ADDRESS}/influxdb",
         "tag": {
-            "version": "0.0.${BUILD_BUILDID}",
+            "version": "1.7.1",
             "platforms": {
-                "amd64": "./Dockerfile.amd64",
+                "amd64": "./Dockerfile.amd64", 
                 "amd64.debug": "./Dockerfile.amd64.debug"
             }
         },
         "buildOptions": [],
-        "contextPath": "../../"
+        "contextPath": "./"
     },
     "language": "csharp"
 }

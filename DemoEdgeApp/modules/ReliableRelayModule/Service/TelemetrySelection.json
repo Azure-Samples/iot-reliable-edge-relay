@@ -1,0 +1,37 @@
+﻿{
+  "Databases": [
+    {
+      "Name": "opcuatelemetry",
+      "Measurements": [
+        {
+          "Name": "telemetry",
+          "Tags": [
+            {
+              "Name": "deviceID",
+              "PayloadMapping": "deviceID",
+              "AbandonIfEmpty": false
+            }
+          ],
+          "Fields": [
+            {
+              "Name": "payload",
+              "PayloadMapping": "value",
+              "Type": "string",
+              "AbandonIfEmpty": false,
+              "IgnoreIfEmpty": true
+            },
+            {
+              "Name": "nodeID",
+              "PayloadMapping": "nodeID",
+              "Type": "string",
+              "AbandonIfEmpty": false,
+              "IgnoreIfEmpty": true
+            }
+            
+          ]
+        }
+      ],
+      "TimestampPayloadMapping": "timestamp"
+    }
+  ]
+}

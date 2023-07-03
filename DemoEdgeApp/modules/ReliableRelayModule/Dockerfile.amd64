@@ -1,11 +1,15 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
 WORKDIR /app
 
-COPY *.csproj ./
-RUN dotnet restore
+COPY /modules/ReliableRelayModule /modules/ReliableRelayModule
+COPY /ModuleWrapper /ModuleWrapper
+
+RUN dotnet restore /modules/ReliableRelayModule/ReliableRelayModule.csproj
 
 COPY . ./
-RUN dotnet publish -c Release -o out
+RUN dotnet publish /modules/ReliableRelayModule/ReliableRelayModule.csproj -c Release -o /app/out
+
+WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/runtime:6.0
 WORKDIR /app

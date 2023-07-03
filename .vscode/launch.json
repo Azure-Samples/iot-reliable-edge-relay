@@ -6,6 +6,15 @@
       "type": "coreclr",
       "request": "attach",
       "processId": "${command:azureFunctions.pickProcess}"
+    },
+    {
+      "name": "Docker .NET Launch",
+      "type": "docker",
+      "request": "launch",
+      "preLaunchTask": "docker-run: debug",
+      "netCore": {
+        "appProject": "${workspaceFolder}/DemoEdgeApp/modules/ReliableRelayModule/ReliableRelayModule.csproj"
+      }
     }
   ]
 }
