@@ -74,7 +74,7 @@
 		.st60 {fill:#00b050;fill-opacity:1;stroke:#00b050;stroke-opacity:1;stroke-width:0.16556291390728}
 		.st61 {fill:#00b050;font-family:Calibri;font-size:0.833336em}
 		.st62 {stroke:#00b050;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.5}
-		.st63 {fill:#000000;font-family:Calibri;font-size:1.00001em;font-weight:bold}
+		.st63 {fill:#000000;font-family:Calibri;font-size:1.33333em;font-weight:bold}
 		.st64 {font-size:1em;text-decoration:underline}
 		.st65 {fill:#000000;font-family:Calibri;font-size:1.00001em}
 		.st66 {fill:#a5a5a5;fill-opacity:0.5;stroke:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.5}
@@ -1374,14 +1374,14 @@
 			<title>Dynamic connector.1101</title>
 			<path d="M9 612 L9 586.54" class="st59"/>
 		</g>
-		<g id="shape1103-348" v:mID="1103" v:groupContext="shape" v:layerMember="0" transform="translate(285.259,-198.914)">
+		<g id="shape1103-348" v:mID="1103" v:groupContext="shape" v:layerMember="0" transform="translate(278.509,-202.5)">
 			<title>Dynamic connector.1103</title>
 			<desc>Queried Gaps</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)"/>
-			<v:textRect cx="-110.428" cy="612" width="65.76" height="20.0036"/>
-			<path d="M0 612 L-186.44 612 L-186.44 577.58" class="st62"/>
-			<rect v:rectContext="textBkgnd" x="-138.175" y="606" width="55.4936" height="12.0001" class="st55"/>
-			<text x="-138.17" y="615" class="st61" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Queried Gaps</text>		</g>
+			<v:textRect cx="-105.26" cy="612" width="65.76" height="20.0036"/>
+			<path d="M0 612 L-179.69 612 L-179.69 581.17" class="st62"/>
+			<rect v:rectContext="textBkgnd" x="-133.006" y="606" width="55.4936" height="12.0001" class="st55"/>
+			<text x="-133.01" y="615" class="st61" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Queried Gaps</text>		</g>
 		<g id="shape1105-353" v:mID="1105" v:groupContext="shape" v:layerMember="0" transform="translate(301.5,-255.375)">
 			<title>Dynamic connector.1105</title>
 			<desc>Gaps Data</desc>
@@ -1394,10 +1394,10 @@
 			<title>Dynamic connector.1106</title>
 			<desc>Gaps Data</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)"/>
-			<v:textRect cx="0" cy="540" width="51.88" height="20.0036"/>
+			<v:textRect cx="7.71429" cy="540" width="51.88" height="20.0036"/>
 			<path d="M0 612 L-0 529.71 L55.67 529.71" class="st59"/>
-			<rect v:rectContext="textBkgnd" x="-20.8032" y="534" width="41.6066" height="12.0001" class="st55"/>
-			<text x="-20.8" y="543" class="st61" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Gaps Data</text>		</g>
+			<rect v:rectContext="textBkgnd" x="-13.0889" y="534" width="41.6066" height="12.0001" class="st55"/>
+			<text x="-13.09" y="543" class="st61" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Gaps Data</text>		</g>
 		<g id="shape1107-367" v:mID="1107" v:groupContext="shape" v:layerMember="0" transform="translate(391.5,-273.099)">
 			<title>Dynamic connector.1107</title>
 			<desc>Gaps Data</desc>
@@ -1427,11 +1427,11 @@
 			<title>Dynamic connector.1110</title>
 			<desc>OPC UA Telemetry</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)"/>
-			<v:textRect cx="0.562513" cy="571.5" width="51.72" height="32.0037"/>
-			<path d="M0 612 L-0 513 L74.96 513" class="st53"/>
-			<rect v:rectContext="textBkgnd" x="-20.1603" y="559.5" width="41.4459" height="23.9999" class="st55"/>
-			<text x="-15.23" y="568.5" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>OPC UA <v:newlineChar/><tspan
-						x="-20.16" dy="1.2em" class="st9">Telemetry</tspan></text>		</g>
+			<v:textRect cx="-8.99999" cy="571.5" width="51.72" height="32.0037"/>
+			<path d="M0 612 L0 513 L74.96 513" class="st53"/>
+			<rect v:rectContext="textBkgnd" x="-29.7228" y="559.5" width="41.4459" height="23.9999" class="st55"/>
+			<text x="-24.79" y="568.5" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>OPC UA <v:newlineChar/><tspan
+						x="-29.72" dy="1.2em" class="st9">Telemetry</tspan></text>		</g>
 		<g id="shape1111-397" v:mID="1111" v:groupContext="shape" v:layerMember="0" transform="translate(680.538,-400.5)">
 			<title>Dynamic connector.1111</title>
 			<desc>Query Telemetry</desc>
@@ -1495,20 +1495,20 @@
 			<path d="M0 603 L-70.46 603" class="st59"/>
 			<rect v:rectContext="textBkgnd" x="-49.1339" y="597" width="21.7678" height="12.0001" class="st55"/>
 			<text x="-49.13" y="606" class="st61" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Retry</text>		</g>
-		<g id="shape1119-455" v:mID="1119" v:groupContext="shape" transform="translate(378,-548)">
+		<g id="shape1119-455" v:mID="1119" v:groupContext="shape" transform="translate(369,-548)">
 			<title>Sheet.1119</title>
 			<desc>Edge</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)"/>
-			<v:textRect cx="18.2456" cy="602" width="36.5" height="20"/>
-			<rect x="0" y="592" width="36.4912" height="20" class="st45"/>
-			<text x="6.23" y="605.6" class="st63" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/><tspan class="st64">Edge</tspan></text>		</g>
-		<g id="shape1120-459" v:mID="1120" v:groupContext="shape" transform="translate(418.999,-548)">
+			<v:textRect cx="22.9885" cy="602" width="45.98" height="20"/>
+			<rect x="0" y="592" width="45.977" height="20" class="st45"/>
+			<text x="6.97" y="606.8" class="st63" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/><tspan class="st64">Edge</tspan></text>		</g>
+		<g id="shape1120-459" v:mID="1120" v:groupContext="shape" transform="translate(420.656,-548)">
 			<title>Sheet.1120</title>
 			<desc>Cloud</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)"/>
-			<v:textRect cx="22.3595" cy="602" width="44.72" height="20"/>
-			<rect x="0" y="592" width="44.719" height="20" class="st45"/>
-			<text x="8.04" y="605.6" class="st63" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/><tspan class="st64">Cloud</tspan></text>		</g>
+			<v:textRect cx="28.1718" cy="602" width="56.35" height="20"/>
+			<rect x="0" y="592" width="56.3435" height="20" class="st45"/>
+			<text x="9.09" y="606.8" class="st63" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/><tspan class="st64">Cloud</tspan></text>		</g>
 		<g id="shape1125-463" v:mID="1125" v:groupContext="shape" transform="translate(109.125,-556)">
 			<title>Sheet.1125</title>
 			<desc>Gap Backfill Process</desc>
