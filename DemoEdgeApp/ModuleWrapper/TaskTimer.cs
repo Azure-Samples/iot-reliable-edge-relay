@@ -26,7 +26,7 @@ namespace ModuleWrapper
         public void Start()
         {
             Task elapsedTask = null;
-            elapsedTask = new Task((x) =>
+            elapsedTask = new Task((_) =>
             {
                 Elapsed(elapsedTask, cancellationTokenSource);
             }, cancellationTokenSource.Token);
@@ -48,7 +48,7 @@ namespace ModuleWrapper
 
             onElapsedCallback();
 
-            var delay = timerPeriod - (DateTime.Now - start);
+            var delay = this.timerPeriod - (DateTime.Now - start);
             if (delay.Ticks > 0)
             {
                 Log.Verbose($"Waiting for {delay}");
