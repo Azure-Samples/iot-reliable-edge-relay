@@ -1,10 +1,3 @@
-<!-- 
-Guidelines on README format: https://review.docs.microsoft.com/help/onboard/admin/samples/concepts/readme-template?branch=master
-
-Guidance on onboarding samples to docs.microsoft.com/samples: https://review.docs.microsoft.com/help/onboard/admin/samples/process/onboarding?branch=master
-
-Taxonomies for products and languages: https://review.docs.microsoft.com/new-hope/information-architecture/metadata/taxonomies?branch=master
--->
 # Industrial IoT Edge-to-Cloud Communication Resiliency
 
 ## 1. Introduction
@@ -16,6 +9,7 @@ In Azure IoT Platform, the data transmission from IoT Edge to IoT Hub may experi
 Some examples of data loss scenarios include:
 
 - IoT Hub accepts requests above its message traffic throttle for a limited time. However, continuous violation of the throttle leads to a [traffic shaping effect](https://learn.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-quotas-throttling#traffic-shaping), where the IoT Hub Message queue fills up, resulting in rejected requests and data loss.
+- During an IoT Hub failover, there is a risk of edge-to-cloud data loss if the IoT Edge device cannot establish a connection to the new active IoT Hub instance in a timely manner. The IoT Edge built-in retry feature will attempt to resend the messages that were not acknowledged by the IoT Hub, but it depends on the timing of the failover event and the recovery of the connection. Thus it's not guarenteed to recover the lost data through this mechanism.
 - When the IoT Edge is restarted, the messages in the queue on the device will be lost. While the IoT Edge built-in retry feature can help recover some lost data in this case, it's not guaranteed to recover all messages. Unsuccessful retry attempts can occur due to persistent network issues or other factors.
 - If the network offline time exceeds the message expiration time configured in the IoT Edge settings, the messages will be considered expired and discarded by the IoT Edge runtime. In such case, the built-in retry feature does not handle expired messages or attempt to resend them once they have exceeded their expiration time.
 
@@ -42,8 +36,6 @@ The key business values of the solution include:
 - **Generic for time-series telemetry**: The solution provides a generic framework for handling OPC UA data or any other time-series data. The design concept is independent of specific telemetry protocol and generically based on time-series data principles. It can be easily adapted to other time-series based telemetry protocols.
 
 ## 3. Solution Architecture
-
-**Quick Onboard: Go to [Setup and Deployment Guide](./SetupAndDeploymentGuide.md) for a quick run of the sample.**
 
 This solution consists of edge and cloud components that work together to ensure reliable and resilient OPC UA data transmission.
 
@@ -89,7 +81,7 @@ InfluxDB is a powerful time-series database that is well-suited for storing and 
   Alternatively, you can explore other client options available for interacting with InfluxDB, such as InfluxDB's official client libraries for various programming languages, including Python, Java, and Go. These libraries offer similar functionality and can be chosen based on your preferred programming language. See the [InfluxDB documentation](https://docs.influxdata.com/influxdb/v1.8/tools/api_client_libraries/) for more information.
 
 - **InfluxDB Configuration and Data Mapping for OPC UA telemetries**
-  
+
   For an efficient storing and querying of reconstructed OPC UA telemetries messages with InfluxDB, a proper configuration for InfluxDB connection, retention policy, and data mapping is required.
 
   In this sample, OPC UA telemetries messages contain properties such as timestamp, device ID, node ID, and telemetries value as in [Section 3.1.1 OPC UA Reconstruction](#311-opc-ua-reconstruction). These properties are mapped to InfluxDB measurements, tags, and fields, to enable efficient storage and querying of telemetries data.
@@ -182,7 +174,7 @@ For managing the retry queue, Azure Storage Queue is utilized to store the faile
 ## 4. Design Considerations
 
 ### 4.1 Edge Design Consideration
-  
+
 - **Time-series data type**: This solution is based on time-series data principles, ensure your telemetry is time-series data when you design your solution with this pattern.
 - **Data securely saved before sending**: This solution is focusing on ensuring resiliency in the message flow from IoT Edge to the Cloud and includes the message path from the relay module to the IoT Edge Hub. However, it does not cover the message flow break from the message publisher to the relay module. Therefore, during the design process, it is crucial to ensure that OPC UA data is securely saved before being sent to the Edge Hub and the cloud. This ensures that all successfully ingested OPC UA data from the publisher is stored and any breaks in the OPC UA streaming to the IoT Edge and cloud can be detected.
 
@@ -200,7 +192,7 @@ However, it's important to design the batch size based on your specific user req
   To adopt the scale-out design (1) which focus on scaling out the first-level IoT Edge devices, it is crucial to ensure that the design incorporates a device ID (device name) associated with each IoT Edge Device and its streamed telemetry. This device ID can serve as the device stream identifier, facilitating the scaling out of the design by enabling proper identification and management of individual edge devices.
 
   When design for a large scale of edge devices, it is essential to consider the cost implications of Azure Stream Analytics (ASA) for handling the detection part due to the increasing data load. To achieve cost efficiency, it may be beneficial to explore the possibility of using Azure Functions (Az Func) as an alternative to ASA for the detection process.
-  
+
 ### 4.2 Gap Detection Design Consideration
 
 - **Loss of a single message**: The solution focuses on detecting batch gaps and does not cover the loss of a specific message within a batch. Loss of a message within a batch is considered a purely edge-side issue and is not a result of the hybrid communication process.
@@ -225,6 +217,10 @@ The solution offers the extensibility to incorporate additional features and enh
 - **Edge AI Inference**: By leveraging the pre-processed OPC UA telemetry data, the solution can be extended to support edge AI inference and monitoring. Edge devices equipped with AI capabilities can perform real-time analytics and decision-making at the edge, reducing latency and bandwidth usage by avoiding frequent data transmission to the cloud. This extension opens up possibilities for intelligent edge applications, such as predictive maintenance, anomaly detection, and optimization of industrial processes.
 - **Edge Dashboarding**: The solution's design allows for the creation of edge dashboards using pre-processed OPC UA telemetry data. Edge dashboards provide real-time visualization of operational metrics, enabling operators and engineers to monitor and analyze data locally. This extension enhances situational awareness, facilitates quick decision-making, and reduces the reliance on cloud-based visualization tools.
 - **Edge-based Historical Data Retrieval**: To reduce the expenses associated with data transmission, the solution can be expanded to retrieve historical data directly from the edge instead of relying solely on cloud storage for accessing older data. By utilizing the local historian capabilities offered by InfluxDB, historical telemetry data can be efficiently obtained from the edge when required. This extension promotes cost efficiency by minimizing the need for data transmission and offers an alternative method for accessing historical data, facilitating analysis and reporting tasks.
+
+## 6. Code Sample
+
+Find the code sample repository from [here](https://github.com/Azure-Samples/iot-reliable-edge-relay).
 
 ## Related Readings
 
