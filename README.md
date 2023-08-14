@@ -1,3 +1,19 @@
+---
+page_type: sample
+languages:
+- csharp
+products:
+- azure
+- azure-iot-hub
+- dotnet-core
+- azure-stream-analytics
+- azure-sql-database
+- azure-functions
+- azure-event-hubs
+- azure-queue-storage
+description: "A Reliable Edge Relay is a micro-pattern that demonstrates an reliable streaming data ingestion from the Edge to Azure. This implementation can detect stream data gaps and submit a back-fill request to the Edge."
+urlFragment: "iot-reliable-edge-relay"
+---
 # Industrial IoT Edge-to-Cloud Communication Resiliency
 
 ## 1. Introduction
