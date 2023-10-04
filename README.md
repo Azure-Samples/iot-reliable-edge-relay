@@ -5,7 +5,7 @@ languages:
 products:
 - azure
 - azure-iot-hub
-- dotnet-core
+- dotnet
 - azure-stream-analytics
 - azure-sql-database
 - azure-functions
